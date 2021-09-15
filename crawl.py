@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import re
 import time
+import json
 
 from requests.adapters import HTTPAdapter
 from retrying import retry
@@ -180,3 +181,7 @@ def get_house_descriptions():
 if __name__ == '__main__':
     descriptions = get_house_descriptions()
     print("Finished crawling. Uploading to S3...")
+    current_date = datetime.today().strftime('%d-%m-%y')
+
+    with open(f"data/{current_date}.json") as f:
+        json.dump(descriptions, f)
