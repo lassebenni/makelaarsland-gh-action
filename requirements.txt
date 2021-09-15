@@ -1,5 +1,4 @@
 beautifulsoup4==4.9.3
-boto3==1.17
 dataclasses_json==0.5.4
 desert==2020.11.18
 marshmallow==3.12.2
