@@ -8,12 +8,9 @@ from requests.adapters import HTTPAdapter
 from retrying import retry
 import requests
 
-import boto3
 from bs4 import BeautifulSoup
 from makelaarsland.makelaarsland import Makelaarsland, Listing
 
-BUCKET_NAME = os.environ.get('S3_BUCKET')
-s3 = boto3.client('s3')
 
 BASE_URL = "https://mijn.makelaarsland.nl"
 FIRST_PAGE_LISTING_URL = f"{BASE_URL}/aanbod/kaart?id="
@@ -180,7 +177,7 @@ def get_house_descriptions():
 
 if __name__ == '__main__':
     descriptions = get_house_descriptions()
-    print("Finished crawling. Uploading to S3...")
+    print("Finished crawling. Storing as JSON.")
     current_date = datetime.today().strftime('%d-%m-%y')
 
     with open(f"data/{current_date}.json") as f:
