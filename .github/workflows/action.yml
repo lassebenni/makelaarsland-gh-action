@@ -1,0 +1,18 @@
+on: push
+  # schedule:
+  #   - cron:  '0 8 * * *' # every day at 8am
+name: Pull Data and Build
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: python:3.9
+    steps:
+    - uses: actions/checkout@master
+    - name: pip install
+      run: pip install -r requirements.txt
+    - name: run crawler
+      run: python crawl.py
+    - uses: mikeal/publish-to-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
