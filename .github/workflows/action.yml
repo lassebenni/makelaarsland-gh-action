@@ -4,6 +4,7 @@ on: push
 name: Pull Data and Build
 jobs:
   build:
+    environment: default
     name: Build
     runs-on: ubuntu-latest
     container: python:3.9
