@@ -162,7 +162,7 @@ def get_house_descriptions():
     makelaarsland = Makelaarsland()
     house_description_urls = house_description_urls
     count = 0
-    for url in house_description_urls[0]:
+    for url in house_description_urls:
         listing_dict = get_description(session, url)
         listing: Listing = makelaarsland.create_listing(
             listing=listing_dict, to_dict=True)
