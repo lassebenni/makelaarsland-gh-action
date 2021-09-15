@@ -162,7 +162,7 @@ def get_house_descriptions():
     makelaarsland = Makelaarsland()
     house_description_urls = house_description_urls
     count = 0
-    for url in house_description_urls:
+    for url in house_description_urls[0]:
         listing_dict = get_description(session, url)
         listing: Listing = makelaarsland.create_listing(
             listing=listing_dict, to_dict=True)
@@ -180,5 +180,5 @@ if __name__ == '__main__':
     print("Finished crawling. Storing as JSON.")
     current_date = datetime.today().strftime('%d-%m-%y')
 
-    with open(f"data/{current_date}.json") as f:
+    with open(f"data/{current_date}.json", "w") as f:
         json.dump(descriptions, f)
