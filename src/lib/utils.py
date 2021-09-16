@@ -22,3 +22,6 @@ def pandas_read(path: str, extension: str) -> pd.DataFrame:
     """
     files = glob.glob(os.path.join(path, '*.' + extension))
     return pd.concat(map(pd.read_json, files))
+
+def flatten(t):
+    return [item for sublist in t for item in sublist]

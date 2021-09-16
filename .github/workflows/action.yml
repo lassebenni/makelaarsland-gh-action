@@ -2,11 +2,12 @@ on:
   pull_request:
   schedule:
     - cron: "16 7 * * *" # every day at 7:16 am
-name: Pull Data and Build
+name: Crawl Makelaarsland.nl
 jobs:
-  build:
+  push:
+    if: ${{ github.event_name == 'push' }}
     environment: default
-    name: Build
+    name: Push
     runs-on: ubuntu-latest
     container: python:3.9
     steps:
@@ -20,9 +21,25 @@ jobs:
           MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
           MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
       - uses: lassebenni/publish-to-github-action@master
-        if: ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
+
+  pr:
+    if: ${{ github.event_name == 'pull_request' }}
+    environment: default
+    name: PR
+    runs-on: ubuntu-latest
+    container: python:3.9
+    steps:
+      - uses: actions/checkout@master
+      - name: pip install
+        run: pip install -r requirements.txt
+      - name: run makelaarsland crawler
+        run: python main.py makelaarsland 1
+        env:
+          MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
+          MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
+          MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
       - uses: lassebenni/publish-to-github-action@master
         if: ${{ github.event_name == 'pull_request' }}
         env:
