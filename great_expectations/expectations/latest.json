@@ -1,0 +1,73 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "latest",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_ordered_list",
+      "kwargs": {
+        "column_list": [
+          "city",
+          "date",
+          "postal_code",
+          "price",
+          "streetname",
+          "url",
+          "amenities",
+          "appartment_type",
+          "balcony_terrace",
+          "bathroom_amenities",
+          "bathrooms_amount",
+          "build_year",
+          "construction_type",
+          "delivery",
+          "external_storage",
+          "floor",
+          "floors_amount",
+          "heating_type",
+          "heating",
+          "isolation",
+          "kvk_insurance",
+          "kvk_monthly_payment",
+          "kvk_registration",
+          "kvk_repair_plan",
+          "kvk_reserve_funds",
+          "kvk_yearly_meeting",
+          "living_size",
+          "location",
+          "outside_size",
+          "parking",
+          "roof",
+          "rooms_amount",
+          "status",
+          "volume",
+          "warm_water"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "max_value": 136,
+        "min_value": 136
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "batch_request": {
+          "data_asset_name": "16-09-21.json",
+          "data_connector_name": "default_inferred_data_connector_name",
+          "datasource_name": "data_dir",
+          "limit": 1000
+        },
+        "citation_date": "2021-09-16T20:11:59.023431Z",
+        "comment": "Created suite added via CLI"
+      }
+    ],
+    "great_expectations_version": "0.13.34"
+  }
+}
