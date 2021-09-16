@@ -1,7 +1,7 @@
 on:
   pull_request:
   schedule:
-    - cron:  '16 7 * * *' # every day at 7:16 am
+    - cron: "16 7 * * *" # every day at 7:16 am
 name: Pull Data and Build
 jobs:
   build:
@@ -14,11 +14,17 @@ jobs:
       - name: pip install
         run: pip install -r requirements.txt
       - name: run makelaarsland crawler
-        run: python crawl.py makelaarsland
+        run: python main.py makelaarsland
         env:
           MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
           MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
           MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
-      - uses: mikeal/publish-to-github-action@master
+      - uses: lassebenni/publish-to-github-action@master
+        if: ${{ github.event_name == 'push' }}
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
+      - uses: lassebenni/publish-to-github-action@master
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
