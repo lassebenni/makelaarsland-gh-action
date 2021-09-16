@@ -1,8 +1,8 @@
 import os
 import fire
 
-from makelaarsland.crawl import MakelaarslandCrawler
-from walter.walterliving import WalterLiving
+from src.makelaarsland.crawl import MakelaarslandCrawler
+from src.walter.walterliving import WalterLiving
 
 
 def crawl_makelaarsland():
@@ -17,7 +17,7 @@ def crawl_makelaarsland():
 def crawl_walterliving():
     proxy_url = os.getenv('PROXY_URL', '')
     walter = WalterLiving(proxy_url)
-    walter.add_woz_values(csv_path='output/makelaarsland.csv')
+    walter.add_woz_values(csv_path='data/output/makelaarsland.csv')
 
 
 if __name__ == "__main__":

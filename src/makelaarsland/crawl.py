@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 import requests
 
 from bs4 import BeautifulSoup
-from makelaarsland.makelaarsland import Makelaarsland, Listing
+from makelaarsland.makelaarsland import Makelaarsland
 
 
 class MakelaarslandCrawler:
@@ -174,7 +174,7 @@ class MakelaarslandCrawler:
         df.to_csv(f'{output_dir}/makelaarsland.csv')
 
 
-    def crawl_listings(self, input_dir: str = 'data', output_dir: str = 'output'):
+    def crawl_listings(self, input_dir: str = 'data/scraped', output_dir: str = 'data/output'):
         descriptions = self._get_house_descriptions()
 
         print(f"Finished crawling. Storing as JSON into dir: {input_dir}.")
