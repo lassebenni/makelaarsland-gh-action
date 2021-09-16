@@ -41,8 +41,3 @@ jobs:
           MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
           MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
           MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
-      - uses: lassebenni/publish-to-github-action@master
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
