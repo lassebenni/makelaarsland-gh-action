@@ -2,12 +2,12 @@ on:
   pull_request:
   schedule:
     - cron: "16 7 * * *" # every day at 7:16 am
-name: Pull Data and Build
+name: Crawl Makelaarsland.nl
 jobs:
-  main:
+  push:
     if: ${{ github.event_name == 'push' }}
     environment: default
-    name: Build
+    name: Push
     runs-on: ubuntu-latest
     container: python:3.9
     steps:
@@ -27,7 +27,7 @@ jobs:
   pr:
     if: ${{ github.event_name == 'pull_request' }}
     environment: default
-    name: Build
+    name: PR
     runs-on: ubuntu-latest
     container: python:3.9
     steps:

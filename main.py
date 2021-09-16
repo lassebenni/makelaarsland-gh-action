@@ -11,7 +11,7 @@ def crawl_makelaarsland(limit: int = 0):
     listing_id = os.getenv('MAKELAARSLAND_LISTING_ID', '')
 
     crawler = MakelaarslandCrawler(username, password, listing_id)
-    crawler.crawl_listings(limit)
+    crawler.crawl_listings(limit=limit)
 
 
 def crawl_walterliving():

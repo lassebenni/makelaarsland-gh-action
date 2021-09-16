@@ -167,6 +167,7 @@ class MakelaarslandCrawler:
         self._check_logged_in(first_page_listing)
 
         # only take the limit of house urls to crawl
+        print(f'limit is={limit}')
         if limit > 0:
             house_urls = self._get_house_urls(first_page_listing)
             if house_urls:
@@ -182,7 +183,8 @@ class MakelaarslandCrawler:
         urls = []
 
         # add the house description urls from the first page
-        urls.append(self._get_house_urls(first_page_listing))
+        for url in self._get_house_urls(first_page_listing):
+            urls.append(url)
 
         paginated_listing_urls = self._get_paginated_listing_urls(
             first_page_listing)
@@ -190,9 +192,8 @@ class MakelaarslandCrawler:
         # add house description urls for the other pages
         for paginated_listing in paginated_listing_urls:
             listings_soup = self._get_listings_soup(paginated_listing)
-            paginated_house_urls = self._get_house_urls(listings_soup)
-            # add URLS from first page to the URLS in the paginated other pages
-            urls.append(paginated_house_urls)
+            for url in self._get_house_urls(listings_soup):
+                urls.append(url)
 
         return urls
 
