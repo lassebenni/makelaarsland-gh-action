@@ -21,4 +21,4 @@ def pandas_read(path: str, extension: str) -> pd.DataFrame:
         DataFrame containg the files that were read.
     """
     files = glob.glob(os.path.join(path, '*.' + extension))
-    return pd.concat(map(pd.read_csv, files))
+    return pd.concat(map(pd.read_json, files))
