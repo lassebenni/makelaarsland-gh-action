@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@master
       - name: pip install
         run: pip install -r requirements.txt
-      - name: run crawler
-        run: python crawl.py
+      - name: run makelaarsland crawler
+        run: python crawl.py makelaarsland
         env:
           MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
           MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
