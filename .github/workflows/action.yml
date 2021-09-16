@@ -1,4 +1,5 @@
 on:
+  pull_request:
   schedule:
     - cron:  '16 7 * * *' # every day at 7:16 am
 name: Pull Data and Build
