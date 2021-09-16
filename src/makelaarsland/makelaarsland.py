@@ -154,6 +154,7 @@ class Makelaarsland:
             translated_listing[pair.english] = listing.get(pair.dutch)
 
         if not translated_listing.get('appartment_type', None):
+            print('No appartement type for listing.')
             return None
 
         result: Listing = self.schema.load(translated_listing)

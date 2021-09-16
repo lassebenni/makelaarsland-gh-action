@@ -72,7 +72,7 @@ class MakelaarslandCrawler:
         """
         print(f'Scraping {listings_url}')
         listings_response = self.session.get(listings_url)
-        listings_soup = BeautifulSoup(listings_response.content)
+        listings_soup = BeautifulSoup(listings_response.content, features="html.parser")
         return listings_soup
 
     def _get_house_urls(self, listing: BeautifulSoup) -> List[str]:
