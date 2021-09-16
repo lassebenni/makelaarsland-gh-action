@@ -57,7 +57,7 @@ class MakelaarslandCrawler:
         listings_soup = BeautifulSoup(listings_response.content)
         return listings_soup
 
-    def _get_house_urls(listing):
+    def _get_house_urls(self, listing):
         all_houses = listing.find_all(class_='house-content')
         description_urls = [x.a['href'] for x in all_houses]
         return description_urls
@@ -89,7 +89,7 @@ class MakelaarslandCrawler:
 
         return description_kv_pairs
 
-    def extract_all_urls(search_result):
+    def extract_all_urls(self, search_result):
         def extract_last_page_number():
             # Find all pagination links in the search result to find other pages
             all_links = search_result.find('ul', 'pagination').find_all('li')
@@ -152,9 +152,9 @@ class MakelaarslandCrawler:
         makelaarsland = Makelaarsland()
         house_description_urls = house_description_urls
         count = 0
-        for url in house_description_urls[0]:
+        for url in house_description_urls:
             listing_dict = self._get_description(url)
-            listing: Listing = makelaarsland.create_listing(
+            listing = makelaarsland.create_listing(
                 listing=listing_dict, to_dict=True)
             if listing:
                 listings.append(listing)
@@ -165,7 +165,7 @@ class MakelaarslandCrawler:
 
         return listings
 
-    def _combine_results(input_dir: str, output_dir: str):
+    def _combine_results(self, input_dir: str, output_dir: str):
         df = pandas_read(input_dir, 'json')
         deduplicated_df = df.drop_duplicates(subset=['streetname'])
         deduplicated_df.to_csv('output/makelaarsland.csv', index=False)
