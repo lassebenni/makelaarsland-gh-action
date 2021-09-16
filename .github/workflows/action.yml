@@ -5,10 +5,10 @@ on:
     - cron: "16 7 * * *" # every day at 7:16 am
 name: Crawl Makelaarsland.nl
 jobs:
-  default:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'schedule'}}
+  scheduled:
+    if: ${{ || github.event_name == 'schedule'}}
     environment: default
-    name: Push
+    name: default
     runs-on: ubuntu-latest
     container: python:3.9
     steps:
@@ -25,10 +25,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
 
-  pr:
-    if: ${{ github.event_name == 'pull_request' }}
+  throttled:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment: default
-    name: PR
+    name: throttled
     runs-on: ubuntu-latest
     container: python:3.9
     steps:
