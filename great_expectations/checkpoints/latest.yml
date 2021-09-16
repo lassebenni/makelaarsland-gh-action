@@ -1,4 +1,4 @@
-name: my_checkpoint
+name: latest
 config_version: 1.0
 template_name:
 module_name: great_expectations.checkpoint
@@ -23,7 +23,7 @@ validations:
   - batch_request:
       datasource_name: data_dir
       data_connector_name: default_inferred_data_connector_name
-      data_asset_name: 15-09-21.json
+      data_asset_name: 16-09-21.json
       data_connector_query:
         index: -1
     expectation_suite_name: latest
