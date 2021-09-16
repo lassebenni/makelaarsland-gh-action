@@ -5,7 +5,6 @@ import time
 import json
 
 from requests.adapters import HTTPAdapter
-from retrying import retry
 import requests
 
 from bs4 import BeautifulSoup
@@ -34,14 +33,10 @@ class MakelaarslandCrawler:
 
     def __init__(self, username: str, password: str, listing_id: str):
         self.listing_id = listing_id
-
         self.session = self.login(username, password)
 
     def login(self, username, password):
         session = requests.Session()
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
 
         response = session.get(self.LOGIN_URL, headers=self.HEADERS)
         soup = BeautifulSoup(response.content, "html.parser")
@@ -56,7 +51,6 @@ class MakelaarslandCrawler:
 
         return session
 
-    @retry
     def _get_listings(self, listings_url):
         print(f'Scraping {listings_url}')
         listings_response = self.session.get(listings_url)
@@ -68,8 +62,7 @@ class MakelaarslandCrawler:
         description_urls = [x.a['href'] for x in all_houses]
         return description_urls
 
-    @retry
-    def get_description(self, details_url):
+    def _get_description(self, details_url):
         description_response = self.session.get(
             f"{self.BASE_URL}{details_url}")
         description_soup = BeautifulSoup(description_response.content)
@@ -128,7 +121,7 @@ class MakelaarslandCrawler:
     def _get_house_descriptions(self):
         # get the urls for the first listing page
         first_page_listing = self._get_listings(
-            self.session, self.FIRST_PAGE_LISTING_URL + self.listing_id)
+            self.FIRST_PAGE_LISTING_URL + self.listing_id)
 
         not_logged_in = first_page_listing.find_all(text='Inloggen')
         if not_logged_in:
@@ -146,7 +139,7 @@ class MakelaarslandCrawler:
 
         # get house description URLS for all paginated listings
         for paginated_listing in paginated_listing_urls:
-            listing = self._get_listings(self.session, paginated_listing)
+            listing = self._get_listings(paginated_listing)
             paginated_house_urls = self._get_house_urls(listing)
             # add URLS from first page to the URLS in the paginated other pages
             for url in paginated_house_urls:
@@ -160,7 +153,7 @@ class MakelaarslandCrawler:
         house_description_urls = house_description_urls
         count = 0
         for url in house_description_urls[0]:
-            listing_dict = self._get_description(self.session, url)
+            listing_dict = self._get_description(url)
             listing: Listing = makelaarsland.create_listing(
                 listing=listing_dict, to_dict=True)
             if listing:
@@ -179,6 +172,7 @@ class MakelaarslandCrawler:
 
     def crawl_listings(self, input_dir: str = 'data', output_dir: str = 'output'):
         descriptions = self._get_house_descriptions()
+
         print(f"Finished crawling. Storing as JSON into dir: {input_dir}.")
         current_date = datetime.today().strftime('%d-%m-%y')
 
