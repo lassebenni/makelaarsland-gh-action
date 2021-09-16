@@ -6,7 +6,7 @@ on:
 name: Crawl Makelaarsland.nl
 jobs:
   scheduled:
-    if: ${{ || github.event_name == 'schedule'}}
+    if: ${{ github.event_name == 'schedule'}}
     environment: default
     name: default
     runs-on: ubuntu-latest
