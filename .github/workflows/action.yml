@@ -1,11 +1,12 @@
 on:
+  push:
   pull_request:
   schedule:
     - cron: "16 7 * * *" # every day at 7:16 am
 name: Crawl Makelaarsland.nl
 jobs:
-  push:
-    if: ${{ github.event_name == 'push' }}
+  default:
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule'}}
     environment: default
     name: Push
     runs-on: ubuntu-latest
