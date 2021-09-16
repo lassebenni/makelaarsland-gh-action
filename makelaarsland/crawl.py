@@ -168,7 +168,7 @@ class MakelaarslandCrawler:
     def _combine_results(self, input_dir: str, output_dir: str):
         df = pandas_read(input_dir, 'json')
         deduplicated_df = df.drop_duplicates(subset=['streetname'])
-        deduplicated_df.to_csv('output/makelaarsland.csv', index=False)
+        deduplicated_df.to_json(f'{output_dir}/makelaarsland.json')
 
     def crawl_listings(self, input_dir: str = 'data', output_dir: str = 'output'):
         descriptions = self._get_house_descriptions()
