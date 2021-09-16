@@ -1,14 +1,14 @@
 from datetime import datetime
-from lib.utils import pandas_read
+from typing import List
+from src.lib.utils import pandas_read
 import re
 import time
 import json
 
-from requests.adapters import HTTPAdapter
 import requests
 
 from bs4 import BeautifulSoup
-from makelaarsland.makelaarsland import Makelaarsland
+from src.makelaarsland.makelaarsland import Makelaarsland
 
 
 class MakelaarslandCrawler:
@@ -30,12 +30,22 @@ class MakelaarslandCrawler:
 
     listing_id: str = ''
     session = None
+    makelaarsland = Makelaarsland()
 
     def __init__(self, username: str, password: str, listing_id: str):
         self.listing_id = listing_id
         self.session = self.login(username, password)
 
-    def login(self, username, password):
+    def login(self, username, password) -> requests.Session:
+        """ Login to makelaarsland.nl and return a Session object.
+
+        Args:
+            username (str)
+            password (str)
+
+        Returns:
+            requests.Session: [Request Session used for connecting to the website.]
+        """
         session = requests.Session()
 
         response = session.get(self.LOGIN_URL, headers=self.HEADERS)
@@ -51,18 +61,42 @@ class MakelaarslandCrawler:
 
         return session
 
-    def _get_listings(self, listings_url):
+    def _get_listings_soup(self, listings_url) -> BeautifulSoup:
+        """ Return a BeautifulSoup object of the makelaarsland listings page.
+
+        Args:
+            listings_url ([type]): [description]
+
+        Returns:
+            BeautifulSoup: [description]
+        """
         print(f'Scraping {listings_url}')
         listings_response = self.session.get(listings_url)
         listings_soup = BeautifulSoup(listings_response.content)
         return listings_soup
 
-    def _get_house_urls(self, listing):
+    def _get_house_urls(self, listing: BeautifulSoup) -> List[str]:
+        """Return all urls for the description of the house in the BeautifulSoup object.
+
+        Args:
+            listing ([Beautifulsoup]): [Contains the listings of the page]
+
+        Returns:
+            List[str]: [URLS of the houses]
+        """
         all_houses = listing.find_all(class_='house-content')
         description_urls = [x.a['href'] for x in all_houses]
         return description_urls
 
-    def _get_description(self, details_url):
+    def _get_description(self, details_url) -> dict:
+        """ Extract the description from the house details URL.
+
+        Args:
+            details_url ([str]): [House description URL]
+
+        Returns:
+            dict: [Dictionary containing the description of the house]
+        """
         description_response = self.session.get(
             f"{self.BASE_URL}{details_url}")
         description_soup = BeautifulSoup(description_response.content)
@@ -89,23 +123,15 @@ class MakelaarslandCrawler:
 
         return description_kv_pairs
 
-    def extract_all_urls(self, search_result):
-        def extract_last_page_number():
-            # Find all pagination links in the search result to find other pages
-            all_links = search_result.find('ul', 'pagination').find_all('li')
-            # Keep only links with a 'href' attribute
-            actual_links = [link.a['href']
-                            for link in all_links if 'href' in link.a.attrs]
-            # Regex-extract the page numbers from the links
-            page_numbers = [int(re.search('(page=(\d{1,3}))', link)[
-                                2]) for link in actual_links]
-            # Last page number
-            last_page_number = max(page_numbers)
-            # Use this to create all urls
+    def _get_paginated_listing_urls(self, first_listing) -> List[str]:
+        """ Using the first listing page, find total number of listing pages, including paginated ones.
 
-        extract_last_page_number()
+        Args:
+            first_listing ([Beautifulsoup]): [BeautifulSoup object of the first listing page]
 
-    def _get_paginated_listing_urls(self, first_listing):
+        Returns:
+            List[str]: [List of all page URLs]
+        """
         pagination_list = first_listing.find_all('ul', {'class': 'pagination'})
         listing_urls = []
         for pagination in pagination_list:
@@ -118,11 +144,7 @@ class MakelaarslandCrawler:
         page_urls = list(filter(lambda url: "page" in url, unique_urls))
         return page_urls
 
-    def _get_house_descriptions(self):
-        # get the urls for the first listing page
-        first_page_listing = self._get_listings(
-            self.FIRST_PAGE_LISTING_URL + self.listing_id)
-
+    def _check_logged_in(self, first_page_listing: BeautifulSoup):
         not_logged_in = first_page_listing.find_all(text='Inloggen')
         if not_logged_in:
             print(f'Scrape failed. User not logged in.')
@@ -130,42 +152,82 @@ class MakelaarslandCrawler:
         else:
             print("Successfully logged in.")
 
-        # get the urls for the other listing pages
-        house_description_urls = self._get_house_urls(first_page_listing)
-        print(f'Retrieved {len(house_description_urls)} urls.')
-        # get descriptions for all house_urls
+    def _get_house_descriptions(self, limit: int = 0):
+        """ Retrieve the descriptions for the houses in the listing ID.
+
+        Args:
+            limit ([int]): [Limit the number of crawled houses]
+
+        Returns:
+            [type]: [description]
+        """
+        first_page_listing = self._get_listings_soup(
+            self.FIRST_PAGE_LISTING_URL + self.listing_id)
+
+        self._check_logged_in(first_page_listing)
+
+        # only take the limit of house urls to crawl
+        if limit > 0:
+            house_urls = self._get_house_urls(first_page_listing)
+            if house_urls:
+                house_urls = house_urls[:limit]
+        else:
+            house_urls = self._get_paginated_urls(first_page_listing)
+
+        print(f'Crawled listing {house_urls}')
+
+        return self._crawl_house_descriptions(house_urls)
+
+    def _get_paginated_urls(self, first_page_listing: List[str]) -> List[str]:
+        urls = []
+
+        # add the house description urls from the first page
+        urls.append(self._get_house_urls(first_page_listing))
+
         paginated_listing_urls = self._get_paginated_listing_urls(
             first_page_listing)
 
-        # get house description URLS for all paginated listings
+        # add house description urls for the other pages
         for paginated_listing in paginated_listing_urls:
-            listing = self._get_listings(paginated_listing)
-            paginated_house_urls = self._get_house_urls(listing)
+            listings_soup = self._get_listings_soup(paginated_listing)
+            paginated_house_urls = self._get_house_urls(listings_soup)
             # add URLS from first page to the URLS in the paginated other pages
-            for url in paginated_house_urls:
-                house_description_urls.append(url)
+            urls.append(paginated_house_urls)
 
-            print(f'Crawled listing {paginated_listing}')
+        return urls
 
+    def _crawl_house_descriptions(self, urls: List[str]) -> List[str]:
+        """ Crawl the descriptions of the houses and create Listing objects.
+
+        Args:
+            urls List[str]: List of URLs for the houses to crawl
+
+        Returns:
+            List[str]: List of MakelaarslandListing objects
+        """
         listings = []
-        # now get descriptions for all URLS
-        makelaarsland = Makelaarsland()
-        house_description_urls = house_description_urls
         count = 0
-        for url in house_description_urls:
+
+        for url in urls:
             listing_dict = self._get_description(url)
-            listing = makelaarsland.create_listing(
+            listing = self.makelaarsland.create_listing(
                 listing=listing_dict, to_dict=True)
             if listing:
                 listings.append(listing)
             time.sleep(self.SLEEP_TIMEOUT)
             print(
-                f'Crawled description number {count}/{len(house_description_urls)}: {self.BASE_URL}{url}')
+                f'Crawled description number {count}/{len(urls)}: {self.BASE_URL}{url}')
             count += 1
 
         return listings
 
     def _combine_results(self, input_dir: str, output_dir: str):
+        """ Combine the files in the input_dir to a single result in the output_dir.
+
+        Args:
+            input_dir (str): [Directory with the input files]
+            output_dir (str): [Directory for the output file]
+        """
         df = pandas_read(input_dir, 'json')
         df = df.drop_duplicates(subset=['streetname'])
         df.reset_index(drop=True, inplace=True)
@@ -173,9 +235,15 @@ class MakelaarslandCrawler:
         df.to_json(f'{output_dir}/makelaarsland.json', orient='records')
         df.to_csv(f'{output_dir}/makelaarsland.csv')
 
+    def crawl_listings(self, input_dir: str = 'data/scraped', output_dir: str = 'data/output', limit: int = 0):
+        """ Crawls the makelaarsland.nl website and creates a json file with the house descriptions.
 
-    def crawl_listings(self, input_dir: str = 'data/scraped', output_dir: str = 'data/output'):
-        descriptions = self._get_house_descriptions()
+        Args:
+            input_dir (str, optional): Location for the scraped files. Defaults to 'data/scraped'.
+            output_dir (str, optional): Location for the output file. Defaults to 'data/output'.
+            limit (int, optional): Throttling of the amount of houses to crawl. Defaults to 0.
+        """
+        descriptions = self._get_house_descriptions(limit)
 
         print(f"Finished crawling. Storing as JSON into dir: {input_dir}.")
         current_date = datetime.today().strftime('%d-%m-%y')
