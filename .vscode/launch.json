@@ -8,7 +8,8 @@
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
-      "program": "main.py",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["makelaarsland"],
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/.env"
     }
