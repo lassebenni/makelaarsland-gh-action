@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from src.makelaarsland.makelaarsland import Makelaarsland
 
-CITY_REGEX = "((\d{4} \w{2}) (.*))"
+CITY_REGEX = "(\d{4})\s(\w{2}\s)?(.*)"
 
 
 class MakelaarslandCrawler:
@@ -126,7 +126,13 @@ class MakelaarslandCrawler:
 
         postal_code_match = re.search(CITY_REGEX, postal_code_str, re.IGNORECASE)
         if postal_code_match:
-            description_kv_pairs["postal_code"] = postal_code_match[2]
+            postal_code_digits = postal_code_match[1]
+            postal_code_letters = postal_code_match[2]
+
+            description_kv_pairs[
+                "postal_code"
+            ] = f"{postal_code_digits} {postal_code_letters}"
+
             description_kv_pairs["city"] = postal_code_match[3]
 
         description_kv_pairs["url"] = f"{self.BASE_URL}{details_url}"
