@@ -121,7 +121,7 @@ class MakelaarslandCrawler:
         )[0].text.strip()
 
         postal_code_str = description_soup.select(
-            ".house-sale > div:nth-child(3) > div:nth-child(1) > p:nth-child(1)"
+            ".house-sale > div:nth-child(4) > div:nth-child(1) > p:nth-child(1)"
         )[0].text.strip()
 
         postal_code_match = re.search(CITY_REGEX, postal_code_str, re.IGNORECASE)
