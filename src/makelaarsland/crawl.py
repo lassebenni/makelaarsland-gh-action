@@ -105,6 +105,10 @@ class MakelaarslandCrawler:
         description_response = self.session.get(f"{self.BASE_URL}{details_url}")
         description_soup = BeautifulSoup(description_response.content)
 
+        if "Er is iets fout gegaan" in description_soup.text:
+            print(f"Scrape failed for {details_url}")
+            return {}
+
         description_keys = description_soup.find_all(
             "div", class_="col-12 col-sm-4 grey"
         )
