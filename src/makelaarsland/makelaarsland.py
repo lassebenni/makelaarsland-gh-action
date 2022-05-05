@@ -9,71 +9,73 @@ import re
 import desert
 import marshmallow
 
-LOGGER_BASENAME = '''makelaarsland'''
+LOGGER_BASENAME = """makelaarsland"""
 LOGGER = logging.getLogger(LOGGER_BASENAME)
 LOGGER.addHandler(logging.NullHandler())
 
 DUTCH_ENGLISH_ATTRIBUTES = {
-    'Aantal badkamers': 'bathrooms_amount',
-    'Aantal kamers': 'rooms_amount',
-    'Aantal woonlagen': 'floors_amount',
-    'Aanvaarding': 'delivery',
-    'Achtertuin': 'back_yard',
-    'Badkamer voorzieningen': 'bathroom_amenities',
-    'Balkon/dakterras': 'balcony_terrace',
-    'Bouwjaar': 'build_year',
-    'Bouwperiode': 'build_period',
-    'Capaciteit': 'capacity',
-    'city': 'city',
-    'Cv-ketel': 'heating_type',
-    'date': 'date',
-    'Energieklasse': 'energy_class',
-    'Externe bergruimte': 'external_storage',
-    'Gebouwgebonden buitenruimte': 'outside_size',
-    'Gelegen op': 'floor',
-    'Inhoud': 'volume',
-    'Inschrijving KvK': 'kvk_registration',
-    'Isolatie': 'isolation',
-    'Jaarlijkse vergadering': 'kvk_yearly_meeting',
-    'Keurmerken': 'brands',
-    'Ligging tuin': 'garden_location',
-    'Ligging': 'location',
-    'Onderhoudsplan': 'kvk_repair_plan',
-    'Opstalverzekering': 'kvk_insurance',
-    'Overige inpandige ruimte': 'other_inhoouse_spaces',
-    'Perceeloppervlakte': 'plot_area',
-    'Periodieke bijdrage': 'kvk_monthly_payment',
-    'postal_code': 'postal_code',
-    'Reservefonds aanwezig': 'kvk_reserve_funds',
-    'Schuur/berging': 'storage',
-    'Soort appartement': 'appartment_type',
-    'Soort bouw': 'construction_type',
-    'Soort dak': 'roof',
-    'Soort garage': 'garage_type',
-    'Soort parkeergelegenheid': 'parking',
-    'Soort woonhuis': 'house_type',
-    'Status': 'status',
-    'streetname': 'streetname',
-    'Tuin': 'garden',
-    'url': 'url',
-    'Verwarming': 'heating',
-    'Voortuin': 'front_garden',
-    'Voorzieningen': 'amenities',
-    'Vraagprijs': 'price',
-    'Warm water': 'warm_water',
-    'Woonoppervlakte': 'living_size',
-    'Zonneterras': 'sun_terrace',
+    "Aantal badkamers": "bathrooms_amount",
+    "Aantal kamers": "rooms_amount",
+    "Aantal woonlagen": "floors_amount",
+    "Aanvaarding": "delivery",
+    "Achtertuin": "back_yard",
+    "Badkamer voorzieningen": "bathroom_amenities",
+    "Balkon/dakterras": "balcony_terrace",
+    "Bouwjaar": "build_year",
+    "Bouwperiode": "build_period",
+    "Capaciteit": "capacity",
+    "city": "city",
+    "Cv-ketel": "heating_type",
+    "date": "date",
+    "Energieklasse": "energy_class",
+    "Externe bergruimte": "external_storage",
+    "Gebouwgebonden buitenruimte": "outside_size",
+    "Gelegen op": "floor",
+    "Inhoud": "volume",
+    "Inschrijving KvK": "kvk_registration",
+    "Isolatie": "isolation",
+    "Jaarlijkse vergadering": "kvk_yearly_meeting",
+    "Keurmerken": "brands",
+    "Ligging tuin": "garden_location",
+    "Ligging": "location",
+    "Onderhoudsplan": "kvk_repair_plan",
+    "Opstalverzekering": "kvk_insurance",
+    "Overige inpandige ruimte": "other_inhoouse_spaces",
+    "Perceeloppervlakte": "plot_area",
+    "Periodieke bijdrage": "kvk_monthly_payment",
+    "postal_code": "postal_code",
+    "Reservefonds aanwezig": "kvk_reserve_funds",
+    "Schuur/berging": "storage",
+    "Soort appartement": "appartment_type",
+    "Soort bouw": "construction_type",
+    "Soort dak": "roof",
+    "Soort garage": "garage_type",
+    "Soort parkeergelegenheid": "parking",
+    "Soort woonhuis": "house_type",
+    "Status": "status",
+    "streetname": "streetname",
+    "Tuin": "garden",
+    "url": "url",
+    "Verwarming": "heating",
+    "Voortuin": "front_garden",
+    "Voorzieningen": "amenities",
+    "Vraagprijs": "price",
+    "Warm water": "warm_water",
+    "Woonoppervlakte": "living_size",
+    "Zonneterras": "sun_terrace",
 }
 
-TranslatedPair = namedtuple('TranslatedPair', 'dutch english')
-TRANSLATED_PAIRS = [TranslatedPair(*pair)
-                    for pair in list(DUTCH_ENGLISH_ATTRIBUTES.items())]
+TranslatedPair = namedtuple("TranslatedPair", "dutch english")
+TRANSLATED_PAIRS = [
+    TranslatedPair(*pair) for pair in list(DUTCH_ENGLISH_ATTRIBUTES.items())
+]
 
 
 @dataclass_json
 @dataclass
 class Listing:
     """Models a Makelaarsland Listing."""
+
     city: str
     date: str
     postal_code: str
@@ -115,20 +117,19 @@ class Listing:
         self.convert_attributes()
 
     def to_json(self):
-        """Returns the Listing as a json object.
-        """
+        """Returns the Listing as a json object."""
         return json.dumps(self.dict())
 
     def convert_attributes(self):
-        if (match := re.search(r"(\d{1,9}).(\d{1,9})", self.price)):
+        if match := re.search(r"(\d{1,9}).(\d{1,9})", self.price):
             self.price = match[1] + match[2]
 
         def extract_number(attribute: str):
             if attribute:
-                if (match := re.search('\d+', attribute, re.IGNORECASE)):
+                if match := re.search("\d+", attribute, re.IGNORECASE):
                     return match.group(0)
             else:
-                return ''
+                return ""
 
         self.outside_size = extract_number(self.outside_size)
         self.living_size = extract_number(self.living_size)
@@ -144,8 +145,9 @@ class Makelaarsland:
     schema = desert.schema(Listing, meta={"unknown": marshmallow.EXCLUDE})
 
     def __init__(self):
-        logger_name = u'{base}.{suffix}'.format(
-            base=LOGGER_BASENAME, suffix=self.__class__.__name__)
+        logger_name = "{base}.{suffix}".format(
+            base=LOGGER_BASENAME, suffix=self.__class__.__name__
+        )
         self._logger = logging.getLogger(logger_name)
 
     def create_listing(self, listing: Dict, to_dict: bool = True) -> Optional[Listing]:
@@ -153,12 +155,14 @@ class Makelaarsland:
         for pair in TRANSLATED_PAIRS:
             translated_listing[pair.english] = listing.get(pair.dutch)
 
-        if not translated_listing.get('appartment_type', None) and not translated_listing.get('house_type', None):
-            print('No appartement/house type for listing.')
+        if not translated_listing.get(
+            "appartment_type", None
+        ) and not translated_listing.get("house_type", None):
+            print("No appartement/house type for listing.")
             return None
 
         result: Listing = self.schema.load(translated_listing)
-        self._logger.info('Listing created.')
+        self._logger.info("Listing created.")
 
         if to_dict:
             result = result.to_dict()

@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing import List
-from src.lib.utils import pandas_read
+
+import pandas as pd
+from src.lib.aws import write_to_parquet
+from src.lib.utils import pandas_read, write_to_json
 import re
 import time
-import json
 
 import requests
 
@@ -15,7 +17,7 @@ CITY_REGEX = "(\d{4})\s(\w{2}\s)?(.*)"
 
 class MakelaarslandCrawler:
     BASE_URL = "https://mijn.makelaarsland.nl"
-    FIRST_PAGE_LISTING_URL = f"{BASE_URL}/aanbod/kaart?id="
+    FIRST_PAGE_URL = f"{BASE_URL}/aanbod/alle-woningen"
     LOGIN_URL = f"{BASE_URL}/Inloggen"
     SLEEP_TIMEOUT = 1
 
@@ -30,8 +32,7 @@ class MakelaarslandCrawler:
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    def __init__(self, username: str, password: str, listing_id: str):
-        self.listing_id = listing_id
+    def __init__(self, username: str, password: str):
         self.session = self.login(username, password)
         self.makelaarsland = Makelaarsland()
 
@@ -60,6 +61,30 @@ class MakelaarslandCrawler:
         session.post(self.LOGIN_URL, data=payload, headers=self.HEADERS)
 
         return session
+
+    def crawl_listings(self, limit: int = 0,) -> List[str]:
+        """Crawls the makelaarsland.nl website and creates a json file with the house descriptions.
+
+        Args:
+            limit (int, optional): Throttling of the amount of houses to crawl. Defaults to 0.
+        """
+        first_page_listing = self._get_listings_soup(self.FIRST_PAGE_URL)
+        self._check_logged_in(first_page_listing)
+
+        # only take the limit of house urls to crawl
+        print(f"limit is={limit}")
+        if limit > 0:
+            house_urls = self._get_house_urls(first_page_listing)
+            if house_urls:
+                house_urls = house_urls[:limit]
+        else:
+            house_urls = self._get_paginated_urls(first_page_listing)
+
+        print(f"Crawled listing {house_urls}")
+
+        crawled_descriptions: List[str] = self._crawl_house_descriptions(house_urls)
+
+        return crawled_descriptions
 
     def _get_listings_soup(self, listings_url) -> BeautifulSoup:
         """Return a BeautifulSoup object of the makelaarsland listings page.
@@ -173,34 +198,6 @@ class MakelaarslandCrawler:
         else:
             print("Successfully logged in.")
 
-    def _get_house_descriptions(self, limit: int = 0):
-        """Retrieve the descriptions for the houses in the listing ID.
-
-        Args:
-            limit ([int]): [Limit the number of crawled houses]
-
-        Returns:
-            [type]: [description]
-        """
-        first_page_listing = self._get_listings_soup(
-            self.FIRST_PAGE_LISTING_URL + self.listing_id
-        )
-
-        self._check_logged_in(first_page_listing)
-
-        # only take the limit of house urls to crawl
-        print(f"limit is={limit}")
-        if limit > 0:
-            house_urls = self._get_house_urls(first_page_listing)
-            if house_urls:
-                house_urls = house_urls[:limit]
-        else:
-            house_urls = self._get_paginated_urls(first_page_listing)
-
-        print(f"Crawled listing {house_urls}")
-
-        return self._crawl_house_descriptions(house_urls)
-
     def _get_paginated_urls(self, first_page_listing: List[str]) -> List[str]:
         urls = []
 
@@ -249,7 +246,7 @@ class MakelaarslandCrawler:
 
         return listings
 
-    def _combine_results(self, input_dir: str, output_dir: str):
+    def _store_total_deduplicated(self, input_dir: str, output_dir: str):
         """Combine the files in the input_dir to a single result in the output_dir.
 
         Args:
@@ -263,25 +260,27 @@ class MakelaarslandCrawler:
         df.to_json(f"{output_dir}/makelaarsland.json", orient="records")
         df.to_csv(f"{output_dir}/makelaarsland.csv")
 
-    def crawl_listings(
+    def store_listings_locally(
         self,
+        listings: List[str],
         input_dir: str = "data/scraped",
         output_dir: str = "data/output",
-        limit: int = 0,
     ):
-        """Crawls the makelaarsland.nl website and creates a json file with the house descriptions.
+        """Store the listings in the repository
 
         Args:
-            input_dir (str, optional): Location for the scraped files. Defaults to 'data/scraped'.
-            output_dir (str, optional): Location for the output file. Defaults to 'data/output'.
-            limit (int, optional): Throttling of the amount of houses to crawl. Defaults to 0.
+            input_dir (str, optional): _description_. Defaults to "data/scraped".
+            output_dir (str, optional): _description_. Defaults to "data/output".
         """
-        descriptions = self._get_house_descriptions(limit)
-
         print(f"Finished crawling. Storing as JSON into dir: {input_dir}.")
         current_date = datetime.today().strftime("%d-%m-%y")
+        write_to_json(listings, input_dir, current_date)
 
-        with open(f"{input_dir}/{current_date}.json", "w") as f:
-            json.dump(descriptions, f)
+        self._store_total_deduplicated(input_dir, output_dir)
 
-        self._combine_results(input_dir, output_dir)
+    def store_listings_in_s3(self, listings: List[str], bucket: str):
+        current_date = datetime.today().strftime("%d-%m-%y")
+        df = pd.DataFrame(listings)
+        write_to_parquet(
+            df, bucket, f"parquet/{current_date}/{current_date}_makelaarsland.parquet",
+        )
