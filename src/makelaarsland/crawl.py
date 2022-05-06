@@ -62,7 +62,10 @@ class MakelaarslandCrawler:
 
         return session
 
-    def crawl_listings(self, limit: int = 0,) -> List[str]:
+    def crawl_listings(
+        self,
+        limit: int = 0,
+    ) -> List[str]:
         """Crawls the makelaarsland.nl website and creates a json file with the house descriptions.
 
         Args:
@@ -144,6 +147,10 @@ class MakelaarslandCrawler:
             key.text.strip(): val.text.strip()
             for key, val in zip(description_keys, description_values)
         }
+
+        if not description_kv_pairs:
+            print(f"Scrape failed for {details_url}")
+            return {}
 
         description_kv_pairs["streetname"] = description_soup.find_all(
             "div", class_="row justify-content-start mb-3"
@@ -282,5 +289,7 @@ class MakelaarslandCrawler:
         current_date = datetime.today().strftime("%d-%m-%y")
         df = pd.DataFrame(listings)
         write_to_parquet(
-            df, bucket, f"parquet/{current_date}/{current_date}_makelaarsland.parquet",
+            df,
+            bucket,
+            f"parquet/{current_date}/{current_date}_makelaarsland.parquet",
         )
