@@ -15,7 +15,7 @@ def crawl_makelaarsland(limit: int = 0):
     crawler = MakelaarslandCrawler(username, password)
     listings: List[str] = crawler.crawl_listings(limit=limit)
     crawler.store_listings_locally(listings)
-    crawler.store_listings_in_s3(listings, bucket)
+    crawler.store_listings_in_s3(listings, bucket, "scraped/parquet")
 
 
 def crawl_walterliving():
@@ -26,5 +26,8 @@ def crawl_walterliving():
 
 if __name__ == "__main__":
     fire.Fire(
-        {"makelaarsland": crawl_makelaarsland, "walterliving": crawl_walterliving,}
+        {
+            "makelaarsland": crawl_makelaarsland,
+            "walterliving": crawl_walterliving,
+        }
     )
