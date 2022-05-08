@@ -7,15 +7,16 @@ from src.makelaarsland.crawl import MakelaarslandCrawler
 from src.walter.walterliving import WalterLiving
 
 
-def crawl_makelaarsland(limit: int = 0):
+def crawl_makelaarsland(limit: int = 0, store: bool = True):
     username = os.getenv("MAKELAARSLAND_USERNAME")
     password = os.getenv("MAKELAARSLAND_PASSWORD")
     bucket = os.getenv("MAKELAARSLAND_BUCKET")
 
     crawler = MakelaarslandCrawler(username, password)
     listings: List[str] = crawler.crawl_listings(limit=limit)
-    crawler.store_listings_locally(listings)
-    crawler.store_listings_in_s3(listings, bucket, "scraped/parquet")
+    if store:
+        crawler.store_listings_locally(listings)
+        crawler.store_listings_in_s3(listings, bucket, "scraped/parquet")
 
 
 def crawl_walterliving():
