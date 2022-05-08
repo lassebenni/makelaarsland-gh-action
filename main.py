@@ -14,6 +14,7 @@ def crawl_makelaarsland(limit: int = 0, store: bool = True):
 
     crawler = MakelaarslandCrawler(username, password)
     listings: List[str] = crawler.crawl_listings(limit=limit)
+
     if store:
         crawler.store_listings_locally(listings)
         crawler.store_listings_in_s3(listings, bucket, "scraped/parquet")
