@@ -286,10 +286,5 @@ class MakelaarslandCrawler:
         self._store_total_deduplicated(input_dir, output_dir)
 
     def store_listings_in_s3(self, listings: List[str], bucket: str, path: str):
-        current_date = datetime.today().strftime("%d-%m-%y")
         df = pd.DataFrame(listings)
-        write_to_parquet(
-            df,
-            bucket,
-            f"{path}/{current_date}/{current_date}_makelaarsland.parquet",
-        )
+        write_to_parquet(df, bucket, path, ["date"])

@@ -1,8 +1,9 @@
-import awswrangler as wr
 import pandas as pd
 
 
-def write_to_parquet(df: pd.DataFrame, bucket: str, path: str):
+def write_to_parquet(
+    df: pd.DataFrame, bucket: str, path: str, partitions: list[str] = []
+):
     """Write dataframe to bucket + path
 
     Args:
@@ -10,6 +11,10 @@ def write_to_parquet(df: pd.DataFrame, bucket: str, path: str):
         bucket (str): S3 bucket
         path (str): Path to write to
     """
-    wr.s3.to_parquet(
-        df=df, path=f"s3://{bucket}/{path}", compression="snappy", index=False
+
+    df.to_parquet(
+        path=f"s3://{bucket}/{path}",
+        compression="snappy",
+        index=False,
+        partition_cols=partitions,
     )
