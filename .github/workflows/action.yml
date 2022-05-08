@@ -39,7 +39,7 @@ jobs:
       - name: pip install
         run: pip install -r requirements.txt
       - name: run makelaarsland crawler
-        run: python main.py makelaarsland 1
+        run: python main.py makelaarsland 1 false
         env:
           MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
           MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
