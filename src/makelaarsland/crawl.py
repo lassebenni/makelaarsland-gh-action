@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 
 import pandas as pd
@@ -264,8 +264,13 @@ class MakelaarslandCrawler:
         df = df.drop_duplicates(subset=["streetname"])
         df.reset_index(drop=True, inplace=True)
 
+        df = self.fix_future_dates(df)
         df.to_json(f"{output_dir}/makelaarsland.json", orient="records")
         df.to_csv(f"{output_dir}/makelaarsland.csv")
+
+        window_delta = datetime.now() - timedelta(days=30)
+        df_filtered = df[df.date > window_delta]
+        df_filtered.to_csv(f"{output_dir}/makelaarsland_last_month.csv")
 
     def store_listings_locally(
         self,
@@ -288,3 +293,15 @@ class MakelaarslandCrawler:
     def store_listings_in_s3(self, listings: List[str], bucket: str, path: str):
         df = pd.DataFrame(listings)
         write_to_parquet(df, bucket, path, ["date"])
+
+    def fix_future_dates(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df.where(
+            df.date <= datetime.now(),
+            pd.to_datetime(
+                df.date.dt.strftime("%Y-%m-%d"),
+                format="%Y-%d-%m",
+                errors="coerce",
+            ),
+            axis=1,
+        )
+        return df
