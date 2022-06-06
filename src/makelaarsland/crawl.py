@@ -266,11 +266,11 @@ class MakelaarslandCrawler:
 
         df = self.fix_future_dates(df)
         df.to_json(f"{output_dir}/makelaarsland.json", orient="records")
-        df.to_csv(f"{output_dir}/makelaarsland.csv")
+        df.to_csv(f"{output_dir}/makelaarsland.csv", index=False)
 
         window_delta = datetime.now() - timedelta(days=30)
         df_filtered = df[df.date > window_delta]
-        df_filtered.to_csv(f"{output_dir}/makelaarsland_last_month.csv")
+        df_filtered.to_csv(f"{output_dir}/makelaarsland_last_month.csv", index=False)
 
     def store_listings_locally(
         self,
