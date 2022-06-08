@@ -1,0 +1,276 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "makelaarsland",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_ordered_list",
+      "kwargs": {
+        "column_list": [
+          "city",
+          "date",
+          "postal_code",
+          "price",
+          "streetname",
+          "url",
+          "amenities",
+          "appartment_type",
+          "balcony_terrace",
+          "bathroom_amenities",
+          "bathrooms_amount",
+          "build_year",
+          "construction_type",
+          "delivery",
+          "external_storage",
+          "floor",
+          "floors_amount",
+          "heating_type",
+          "heating",
+          "isolation",
+          "kvk_insurance",
+          "kvk_monthly_payment",
+          "kvk_registration",
+          "kvk_repair_plan",
+          "kvk_reserve_funds",
+          "kvk_yearly_meeting",
+          "living_size",
+          "location",
+          "outside_size",
+          "parking",
+          "roof",
+          "rooms_amount",
+          "status",
+          "volume",
+          "warm_water"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "city",
+        "mostly": 0.8
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "date",
+        "mostly": 0.8
+      },
+      "meta": {}
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "postal_code",
+        "mostly": 0.8
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "price",
+        "mostly": 0.8
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "streetname",
+        "mostly": 0.7
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "url",
+        "mostly": 0.7
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "amenities",
+        "mostly": 0.3
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "appartment_type",
+        "value_set": [
+          "Appartement, Beneden + bovenwoning",
+          "Appartement, Beneden + bovenwoning, Bel-etage",
+          "Appartement, Beneden + bovenwoning, Corridorflat",
+          "Appartement, Beneden + bovenwoning, Dubbel bovenhuis",
+          "Appartement, Benedenwoning",
+          "Appartement, Benedenwoning, Bel-etage",
+          "Appartement, Benedenwoning, Souterrain",
+          "Appartement, Bovenwoning",
+          "Appartement, Bovenwoning, Corridorflat",
+          "Appartement, Bovenwoning, Dubbel bovenhuis",
+          "Appartement, Dubbel benedenhuis",
+          "Appartement, Galerijflat",
+          "Appartement, Galerijflat, Corridorflat",
+          "Appartement, Galerijflat, Service flat",
+          "Appartement, Maisonnette",
+          "Appartement, Maisonnette, Bel-etage",
+          "Appartement, Maisonnette, Corridorflat",
+          "Appartement, Maisonnette, Dubbel bovenhuis",
+          "Appartement, Penthouse",
+          "Appartement, Penthouse, Dubbel bovenhuis",
+          "Appartement, Portiekflat",
+          "Appartement, Portiekflat, Bel-etage",
+          "Appartement, Portiekflat, Corridorflat",
+          "Appartement, Portiekflat, Service flat",
+          "Appartement, Portiekwoning",
+          "Appartement, Portiekwoning, Dubbel bovenhuis",
+          "Appartement, Studentenkamer",
+          "Appartement, Tussenverdieping"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_null",
+      "kwargs": {
+        "column": "appartment_type",
+        "mostly": 0.73
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "balcony_terrace",
+        "value_set": [
+          "Balkon aanwezig",
+          "Balkon aanwezig, frans balkon aanwezig",
+          "Dakterras aanwezig",
+          "Dakterras aanwezig, balkon aanwezig",
+          "Dakterras aanwezig, balkon aanwezig, frans balkon aanwezig",
+          "Dakterras aanwezig, frans balkon aanwezig",
+          "Frans balkon aanwezig"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_null",
+      "kwargs": {
+        "column": "balcony_terrace",
+        "mostly": 0.72
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "construction_type",
+        "value_set": ["Bestaande bouw", "N.v.t.", "Nieuwbouw"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "kvk_registration",
+        "value_set": ["Ja", "Nee"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "kvk_repair_plan",
+        "value_set": ["Ja", "Nee"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_null",
+      "kwargs": {
+        "column": "kvk_repair_plan",
+        "mostly": 0.74
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "kvk_reserve_funds",
+        "value_set": ["Ja", "Nee"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_null",
+      "kwargs": {
+        "column": "kvk_reserve_funds",
+        "mostly": 0.74
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "kvk_yearly_meeting",
+        "value_set": ["Ja", "Nee"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_null",
+      "kwargs": {
+        "column": "kvk_yearly_meeting",
+        "mostly": 0.74
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "status",
+        "value_set": [
+          "Beschikbaar",
+          "Ingetrokken",
+          "Onder bod",
+          "Verkocht onder voorbehoud"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "status",
+        "mostly": 0.7
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "batch_request": {
+          "data_asset_name": "makelaarsland.csv",
+          "data_connector_name": "default_inferred_data_connector_name",
+          "datasource_name": "makelaarsland",
+          "limit": 1000
+        },
+        "citation_date": "2022-06-07T18:56:02.073476Z",
+        "comment": "Created suite added via CLI"
+      }
+    ],
+    "great_expectations_version": "0.15.8"
+  }
+}
