@@ -48,6 +48,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  great_expectations:
-    - uses: ./github/workflows/great_expectations.yml
-      secrets: inherit
+  # great_expectations:
+  #   - uses: ./github/workflows/great_expectations.yml
+  #     secrets: inherit
