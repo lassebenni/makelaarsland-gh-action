@@ -19,7 +19,7 @@ jobs:
       - name: Run Great Expectation Checkpoints
         id: ge
         # Use @v0.x instead of @main to pin to a specific version, e.g. @v0.2
-        uses: lassebenni/great_expectations_action@main
+        uses: lassebenni/great_expectations_action@v0.3
         with:
           CHECKPOINTS: "makelaarsland" # This can be a comma-separated list of Checkpoints
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
