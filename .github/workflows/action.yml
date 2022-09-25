@@ -36,7 +36,6 @@ jobs:
     container: python:3.9
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/ge
       - name: pip install
         run: pip install -r requirements.txt
       - name: run makelaarsland crawler
