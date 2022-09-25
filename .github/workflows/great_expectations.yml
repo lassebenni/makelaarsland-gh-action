@@ -10,6 +10,10 @@ jobs:
       - name: Copy Repository contents
         uses: actions/checkout@main
 
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+
         # Run Great Expectations and deploy Data Docs to Netlify
         # In this example, we have configured a Checkpoint called "locations.rds.chk".
       - name: Run Great Expectation Checkpoints
