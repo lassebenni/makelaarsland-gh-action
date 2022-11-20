@@ -63,6 +63,7 @@ DUTCH_ENGLISH_ATTRIBUTES = {
     "Warm water": "warm_water",
     "Woonoppervlakte": "living_size",
     "Zonneterras": "sun_terrace",
+    "uuid": "uuid",
 }
 
 TranslatedPair = namedtuple("TranslatedPair", "dutch english")

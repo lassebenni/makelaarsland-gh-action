@@ -171,8 +171,9 @@ class MakelaarslandCrawler:
 
             description_kv_pairs["city"] = postal_code_match[3]
 
-        description_kv_pairs["url"] = f"{self.BASE_URL}{details_url}"
-        description_kv_pairs["date"] = f"{datetime.today().strftime('%d-%m-%y')}"
+        url = description_kv_pairs["url"] = f"{self.BASE_URL}{details_url}"
+        ingestion_date = description_kv_pairs["date"] = f"{datetime.today().strftime('%d-%m-%y')}"
+        description_kv_pairs["uuid"] = hash((url, ingestion_date)) 
 
         return description_kv_pairs
 
