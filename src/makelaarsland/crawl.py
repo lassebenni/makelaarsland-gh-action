@@ -253,7 +253,9 @@ class MakelaarslandCrawler:
             count += 1
 
         return listings
-
+        
+    
+    # TODO: Remove this function or refactor. We don't want to lose updates due to dedup.
     def _store_total_deduplicated(self, input_dir: str, output_dir: str):
         """Combine the files in the input_dir to a single result in the output_dir.
 
@@ -285,11 +287,12 @@ class MakelaarslandCrawler:
             input_dir (str, optional): _description_. Defaults to "data/scraped".
             output_dir (str, optional): _description_. Defaults to "data/output".
         """
-        print(f"Finished crawling. Storing as JSON into dir: {input_dir}.")
-        current_date = datetime.today().strftime("%d-%m-%y")
-        write_to_json(listings, input_dir, current_date)
+        print(f"Finished crawling. Storing as JSON into dir: {output_dir}.")
+        df = pd.DataFrame(listings)
+        df.to_csv(f"{output_dir}/makelaarsland_daily.csv", index=False)
 
-        self._store_total_deduplicated(input_dir, output_dir)
+        # don't deduplicate
+        # self._store_total_deduplicated(input_dir, output_dir)
 
     def store_listings_in_s3(self, listings: List[str], bucket: str, path: str):
         df = pd.DataFrame(listings)
