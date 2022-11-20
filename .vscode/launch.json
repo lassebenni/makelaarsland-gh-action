@@ -20,6 +20,22 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "justMyCode": true
+    },
+    {
+      "name": "Git History",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/.venv/bin/git-history",
+      "console": "integratedTerminal",
+      "args": [
+        "file",
+        "makelaarsland.db",
+        "data/output/makelaarsland.json",
+        "--branch",
+        "master"
+      ],
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
     }
   ]
 }
