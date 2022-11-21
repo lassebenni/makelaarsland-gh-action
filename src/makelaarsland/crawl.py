@@ -118,7 +118,8 @@ class MakelaarslandCrawler:
             List[str]: [URLS of the houses]
         """
         all_houses = listing.find_all(class_="house-content")
-        description_urls = [x.a["href"] for x in all_houses]
+        # 21-11-22 Makelaarsland added the '?skipBrokerCheck=True' attribute to the URL
+        description_urls = [x.a["href"] + '?skipBrokerCheck=True' for x in all_houses]
         return description_urls
 
     def _get_description(self, details_url) -> dict:
