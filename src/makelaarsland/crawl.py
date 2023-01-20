@@ -119,7 +119,7 @@ class MakelaarslandCrawler:
         """
         all_houses = listing.find_all(class_="house-content")
         # 21-11-22 Makelaarsland added the '?skipBrokerCheck=True' attribute to the URL
-        description_urls = [x.a["href"] + '?skipBrokerCheck=True' for x in all_houses]
+        description_urls = [x.a["href"] + "?skipBrokerCheck=True" for x in all_houses]
         return description_urls
 
     def _get_description(self, details_url) -> dict:
@@ -173,8 +173,10 @@ class MakelaarslandCrawler:
             description_kv_pairs["city"] = postal_code_match[3]
 
         url = description_kv_pairs["url"] = f"{self.BASE_URL}{details_url}"
-        ingestion_date = description_kv_pairs["date"] = f"{datetime.today().strftime('%d-%m-%y')}"
-        description_kv_pairs["uuid"] = hash((url, ingestion_date)) 
+        ingestion_date = description_kv_pairs[
+            "date"
+        ] = f"{datetime.today().strftime('%d-%m-%y')}"
+        description_kv_pairs["uuid"] = hash((url, ingestion_date))
 
         return description_kv_pairs
 
@@ -182,10 +184,10 @@ class MakelaarslandCrawler:
         """Using the first listing page, find total number of listing pages, including paginated ones.
 
         Args:
-            first_listing ([Beautifulsoup]): [BeautifulSoup object of the first listing page]
+            first_listing (BeautifulSoup): BeautifulSoup object of the first listing page
 
         Returns:
-            List[str]: [List of all page URLs]
+            List[str]: List of all page URLs
         """
         pagination_list = first_listing.find_all("ul", {"class": "pagination"})
         listing_urls = []
@@ -197,6 +199,11 @@ class MakelaarslandCrawler:
 
         unique_urls = list(set(listing_urls))
         page_urls = list(filter(lambda url: "page" in url, unique_urls))
+
+        # If there are no pages, we know that there is only one page
+        if len(page_urls) == 0:
+            page_urls.append(f"{self.BASE_URL}{self.URL}")
+
         return page_urls
 
     def _check_logged_in(self, first_page_listing: BeautifulSoup):
@@ -254,8 +261,7 @@ class MakelaarslandCrawler:
             count += 1
 
         return listings
-        
-    
+
     # TODO: Remove this function or refactor. We don't want to lose updates due to dedup.
     def _store_total_deduplicated(self, input_dir: str, output_dir: str):
         """Combine the files in the input_dir to a single result in the output_dir.
