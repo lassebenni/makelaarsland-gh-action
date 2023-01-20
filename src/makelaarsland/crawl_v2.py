@@ -24,10 +24,7 @@ class MakelaarslandCrawlerV2:
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    def __init__(self):
-        pass
-
-    def crawl(self) -> List[HouseListing]:
+    def crawl(self, throttled: bool = False) -> List[HouseListing]:
         listings: List[Dict] = []
         first_page_soup = self.get_soup(self.BASE_URL + str(1) + self.SUFFIX_URL)
         last_page = self.get_last_page(first_page_soup)
@@ -35,13 +32,14 @@ class MakelaarslandCrawlerV2:
         first_page_listings = self.scrape_listings(urls_for_first_page)
         listings.extend(first_page_listings)
 
-        for page in range(2, int(last_page) + 1):
-            print(f"Scraping page {page} of {last_page}")
-            soup = self.get_soup(self.BASE_URL + str(page) + self.SUFFIX_URL)
-            time.sleep(1)
-            urls_for_page = self.fetch_listing_urls(soup)
-            listings_for_page = self.scrape_listings(urls_for_page)
-            listings.extend(listings_for_page)
+        if not throttled:
+            for page in range(2, int(last_page) + 1):
+                print(f"Scraping page {page} of {last_page}")
+                soup = self.get_soup(self.BASE_URL + str(page) + self.SUFFIX_URL)
+                time.sleep(1)
+                urls_for_page = self.fetch_listing_urls(soup)
+                listings_for_page = self.scrape_listings(urls_for_page)
+                listings.extend(listings_for_page)
 
         house_listings = [HouseListing(**listing) for listing in listings]
         return house_listings
@@ -125,18 +123,3 @@ class MakelaarslandCrawlerV2:
     ):
         df = pd.DataFrame([listing.dict() for listing in listings])
         write_to_parquet(df, bucket, path, ["date"])
-
-    # def write_mappings_to_file(self, listings, file_path: str):
-    #     # Open the file for appending
-    #     with open(file_path, "w") as f:
-    #         # Create a CSV writer object
-    #         keys = set()
-    #         for d in listings:
-    #             keys.update(d.keys())
-    #         writer = csv.DictWriter(f, fieldnames=keys)
-    #         # Write the headers
-    #         writer.writeheader()
-
-    #         for mapping in listings:
-    #             # Write the values to the rows
-    #             writer.writerow(mapping)

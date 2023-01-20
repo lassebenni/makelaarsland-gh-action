@@ -3,25 +3,14 @@ from typing import List
 import fire
 from src.makelaarsland.models.house_listing import HouseListing
 from src.makelaarsland.crawl_v2 import MakelaarslandCrawlerV2
-from src.lib.utils import write_to_json
-
-from src.makelaarsland.crawl import MakelaarslandCrawler
-from src.walter.walterliving import WalterLiving
 
 
 def crawl_makelaarsland(limit: int = 0, store: bool = True):
-    # username = os.getenv("MAKELAARSLAND_USERNAME")
-    # password = os.getenv("MAKELAARSLAND_PASSWORD")
-    # bucket = os.getenv("MAKELAARSLAND_BUCKET")
+    bucket = os.getenv("MAKELAARSLAND_BUCKET")
 
-    # crawler = MakelaarslandCrawler(username, password)
     crawler = MakelaarslandCrawlerV2()
     listings: List[HouseListing] = crawler.crawl()
-    crawler.store_house_listings(listings, "lbenninga-projects", "makelaarsland")
-
-    # if store:
-    #     crawler.store_listings_locally(listings)
-    #     crawler.store_listings_in_s3(listings, bucket, "scraped/parquet")
+    crawler.store_house_listings(listings, bucket, "makelaarsland")
 
 
 # def crawl_walterliving():

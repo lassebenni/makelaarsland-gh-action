@@ -18,9 +18,6 @@ jobs:
       - name: run makelaarsland crawler
         run: python main.py makelaarsland
         env:
-          MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
-          MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
-          MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
           MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -28,25 +25,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
 
-  throttled:
-    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    environment: default
-    name: throttled
-    runs-on: ubuntu-latest
-    container: python:3.9
-    steps:
-      - uses: actions/checkout@master
-      - name: pip install
-        run: pip install -r requirements.txt
-      - name: run makelaarsland crawler
-        run: python main.py makelaarsland --limit=1 --store=False
-        env:
-          MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
-          MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
-          MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
-          MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # throttled:
+  #   if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+  #   environment: default
+  #   name: throttled
+  #   runs-on: ubuntu-latest
+  #   container: python:3.9
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: pip install
+  #       run: pip install -r requirements.txt
+  #     - name: run makelaarsland crawler
+  #       run: python main.py makelaarsland throttled=True
+  #       env:
+  #         MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
+  #         MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
+  #         MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
+  #         MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   # great_expectations:
   #   - uses: ./github/workflows/great_expectations.yml
