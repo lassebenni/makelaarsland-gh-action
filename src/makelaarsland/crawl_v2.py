@@ -24,7 +24,10 @@ class MakelaarslandCrawlerV2:
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    def crawl(self, throttled: bool = False) -> List[HouseListing]:
+    def __init__(self, full_run: bool = True):
+        self.full_run = full_run
+
+    def crawl(self) -> List[HouseListing]:
         listings: List[Dict] = []
         first_page_soup = self.get_soup(self.BASE_URL + str(1) + self.SUFFIX_URL)
         last_page = self.get_last_page(first_page_soup)
@@ -32,7 +35,7 @@ class MakelaarslandCrawlerV2:
         first_page_listings = self.scrape_listings(urls_for_first_page)
         listings.extend(first_page_listings)
 
-        if not throttled:
+        if not self.full_run:
             for page in range(2, int(last_page) + 1):
                 print(f"Scraping page {page} of {last_page}")
                 soup = self.get_soup(self.BASE_URL + str(page) + self.SUFFIX_URL)

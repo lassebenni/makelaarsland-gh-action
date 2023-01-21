@@ -5,10 +5,10 @@ from src.makelaarsland.models.house_listing import HouseListing
 from src.makelaarsland.crawl_v2 import MakelaarslandCrawlerV2
 
 
-def crawl_makelaarsland(limit: int = 0, store: bool = True):
-    bucket = os.getenv("MAKELAARSLAND_BUCKET")
+def crawl_makelaarsland(full_run: bool = True):
+    bucket = os.getenv("MAKELAARSLAND_BUCKET", "")
 
-    crawler = MakelaarslandCrawlerV2()
+    crawler = MakelaarslandCrawlerV2(full_run)
     listings: List[HouseListing] = crawler.crawl()
     crawler.store_house_listings(listings, bucket, "makelaarsland")
 
