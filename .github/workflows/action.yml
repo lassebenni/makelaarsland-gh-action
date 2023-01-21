@@ -1,4 +1,5 @@
 on:
+  workflow_dispatch:
   push:
   pull_request:
   schedule:
@@ -6,7 +7,7 @@ on:
 name: Crawl Makelaarsland.nl
 jobs:
   scheduled:
-    if: ${{ github.event_name == 'schedule'}}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
     environment: default
     name: default
     runs-on: ubuntu-latest
@@ -23,7 +24,7 @@ jobs:
       - name: Poetry install
         run: poetry install
       - name: Poetry run main
-        run: poetry run python main.py makelaarsland
+        run: poetry run python main.py makelaarsland --full_run=True
         env:
           MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

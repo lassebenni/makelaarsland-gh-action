@@ -24,7 +24,7 @@ class MakelaarslandCrawlerV2:
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    def __init__(self, full_run: bool = True):
+    def __init__(self, full_run: bool = False):
         self.full_run = full_run
 
     def crawl(self) -> List[HouseListing]:
@@ -35,7 +35,7 @@ class MakelaarslandCrawlerV2:
         first_page_listings = self.scrape_listings(urls_for_first_page)
         listings.extend(first_page_listings)
 
-        if not self.full_run:
+        if self.full_run:
             for page in range(2, int(last_page) + 1):
                 print(f"Scraping page {page} of {last_page}")
                 soup = self.get_soup(self.BASE_URL + str(page) + self.SUFFIX_URL)
