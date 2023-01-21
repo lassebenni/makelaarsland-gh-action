@@ -13,10 +13,17 @@ jobs:
     container: python:3.9
     steps:
       - uses: actions/checkout@master
-      - name: pip install
-        run: pip install -r requirements.txt
-      - name: run makelaarsland crawler
-        run: python main.py makelaarsland
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.1.15"
+      - name: Poetry install
+        run: poetry install
+      - name: Poetry run main
+        run: poetry run python main.py makelaarsland
         env:
           MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -24,26 +31,6 @@ jobs:
       - uses: lassebenni/publish-to-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub sets this for you
-
-  # throttled:
-  #   if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-  #   environment: default
-  #   name: throttled
-  #   runs-on: ubuntu-latest
-  #   container: python:3.9
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: pip install
-  #       run: pip install -r requirements.txt
-  #     - name: run makelaarsland crawler
-  #       run: python main.py makelaarsland throttled=True
-  #       env:
-  #         MAKELAARSLAND_USERNAME: ${{ secrets.MAKELAARSLAND_USERNAME }}
-  #         MAKELAARSLAND_PASSWORD: ${{ secrets.MAKELAARSLAND_PASSWORD }}
-  #         MAKELAARSLAND_LISTING_ID: ${{ secrets.MAKELAARSLAND_LISTING_ID }}
-  #         MAKELAARSLAND_BUCKET: ${{ secrets.MAKELAARSLAND_BUCKET }}
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   # great_expectations:
   #   - uses: ./github/workflows/great_expectations.yml
