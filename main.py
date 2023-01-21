@@ -10,6 +10,7 @@ def crawl_makelaarsland(full_run: bool = False):
 
     crawler = MakelaarslandCrawlerV2(full_run)
     listings: List[HouseListing] = crawler.crawl()
+    print(f"Found {len(listings)} listings")
 
     if full_run:
         crawler.store_house_listings(listings, bucket, "makelaarsland")
