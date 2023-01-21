@@ -15,16 +15,9 @@ def crawl_makelaarsland(full_run: bool = False):
         crawler.store_house_listings(listings, bucket, "makelaarsland")
 
 
-# def crawl_walterliving():
-#     proxy_url = os.getenv("PROXY_URL", "")
-#     walter = WalterLiving(proxy_url)
-#     walter.add_woz_values(csv_path="data/output/makelaarsland.csv")
-
-
 if __name__ == "__main__":
     fire.Fire(
         {
             "makelaarsland": crawl_makelaarsland,
-            # "walterliving": crawl_walterliving,
         }
     )
