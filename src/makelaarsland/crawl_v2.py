@@ -41,6 +41,7 @@ class MakelaarslandCrawlerV2:
                 soup = self.get_soup(self.BASE_URL + str(page) + self.SUFFIX_URL)
                 time.sleep(1)
                 urls_for_page = self.fetch_listing_urls(soup)
+                print(f"Found {len(urls_for_page)} listings for page {page}")
                 listings_for_page = self.scrape_listings(urls_for_page)
                 listings.extend(listings_for_page)
 
@@ -116,6 +117,7 @@ class MakelaarslandCrawlerV2:
         listing_mappings = []
 
         for url in urls:
+            print(f"Scraping listing {url}")
             listing_mapping = self.scrape_listing(url)
             listing_mappings.append(listing_mapping)
 
