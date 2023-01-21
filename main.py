@@ -10,7 +10,9 @@ def crawl_makelaarsland(full_run: bool = False):
 
     crawler = MakelaarslandCrawlerV2(full_run)
     listings: List[HouseListing] = crawler.crawl()
-    crawler.store_house_listings(listings, bucket, "makelaarsland")
+
+    if full_run:
+        crawler.store_house_listings(listings, bucket, "makelaarsland")
 
 
 # def crawl_walterliving():
